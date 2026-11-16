@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>رحلة قادة الأمن السيبراني</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0B1F3A;--blue:#1976D2;--cyan:#00B8D9;--green:#35C759;--red:#E94B4B;--yellow:#FFC857;--light:#F4F7FA;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{font-family:'Cairo','Tajawal',Tahoma,sans-serif;color:var(--light);background:radial-gradient(circle at 50% 0,#14386b,var(--navy) 60%) fixed;overflow-x:hidden}
+.screen{display:none;min-height:100vh;padding:20px;max-width:760px;margin:auto;animation:fade .5s}
+.screen.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+h1,h2{margin:.3em 0}
+.center{text-align:center}
+.card{background:rgba(255,255,255,.07);border:1px solid rgba(0,184,217,.35);border-radius:22px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,.35);margin:14px 0}
+.btn{font:inherit;font-weight:700;font-size:1.1rem;border:0;border-radius:40px;padding:12px 28px;color:#fff;background:linear-gradient(135deg,var(--blue),var(--cyan));box-shadow:0 0 18px rgba(0,184,217,.5);cursor:pointer;transition:.2s}
+.btn:hover{transform:scale(1.04)}.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn.ghost{background:transparent;border:2px solid var(--cyan);box-shadow:none}
+input,textarea{font:inherit;width:100%;border-radius:16px;border:2px solid var(--cyan);background:var(--light);color:var(--navy);padding:12px;margin:10px 0}
+textarea{min-height:170px;resize:vertical}
+.shield{font-size:110px;filter:drop-shadow(0 0 25px var(--cyan));animation:float 3s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-12px)}}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-weight:700}
+.pill{background:rgba(255,255,255,.1);border-radius:30px;padding:6px 14px}
+.pts{color:var(--yellow)}
+/* map */
+.map{display:flex;flex-direction:column-reverse;align-items:center;gap:0;padding:20px 0}
+.node{position:relative;width:100%;display:flex;flex-direction:column;align-items:center;padding:18px 0}
+.node:not(:first-child)::after{content:"";position:absolute;bottom:-34px;width:6px;height:68px;border-radius:4px;background:repeating-linear-gradient(var(--cyan) 0 8px,transparent 8px 16px);opacity:.5}
+.node:nth-child(odd){transform:translateX(70px)}.node:nth-child(even){transform:translateX(-70px)}
+.circle{width:96px;height:96px;border-radius:50%;border:4px solid #fff;display:grid;place-items:center;font-size:42px;cursor:pointer;position:relative;transition:.2s}
+.circle.open{box-shadow:0 0 0 6px rgba(0,184,217,.3),0 0 30px var(--cyan);animation:pulse 1.6s infinite}
+.circle.locked{filter:grayscale(1) brightness(.6);cursor:not-allowed}
+.circle.done{box-shadow:0 0 22px var(--green)}
+@keyframes pulse{50%{transform:scale(1.08)}}
+.badge-n{position:absolute;top:-8px;right:-8px;background:var(--yellow);color:var(--navy);border-radius:50%;width:28px;height:28px;display:grid;place-items:center;font-size:.9rem;font-weight:900}
+.nname{margin-top:8px;font-weight:700;background:rgba(0,0,0,.35);padding:2px 12px;border-radius:20px}
+.stars{color:var(--yellow);letter-spacing:2px}
+/* quiz */
+.bar{height:10px;background:rgba(255,255,255,.15);border-radius:8px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--green));transition:.4s}
+.opt{display:block;width:100%;text-align:right;font:inherit;font-size:1.05rem;background:var(--light);color:var(--navy);border:2px solid transparent;border-radius:16px;padding:12px 16px;margin:8px 0;cursor:pointer;transition:.2s}
+.opt:hover:not(:disabled){border-color:var(--cyan)}
+.opt.ok{background:var(--green);color:#fff;box-shadow:0 0 22px var(--green)}
+.opt.bad{background:var(--red);color:#fff}
+.fb{margin-top:10px;padding:12px;border-radius:14px;display:none}
+.fb.ok{display:block;background:rgba(53,199,89,.2);border:1px solid var(--green)}
+.fb.bad{display:block;background:rgba(233,75,75,.2);border:1px solid var(--red)}
+.alarm{display:none;position:fixed;inset:0;z-index:50;background:rgba(233,75,75,.35);align-items:center;justify-content:center;text-align:center;padding:20px;animation:flash .5s infinite alternate;font-size:1.5rem;font-weight:900}
+.alarm.on{display:flex}
+@keyframes flash{to{background:rgba(233,75,75,.7)}}
+.alarm div{background:var(--navy);border:3px solid var(--red);border-radius:20px;padding:24px;max-width:480px}
+.flash-g{animation:fg .6s}.flash-r{animation:fr .6s}
+@keyframes fg{50%{box-shadow:0 0 60px 10px var(--green)}}
+@keyframes fr{50%{box-shadow:0 0 60px 10px var(--red)}}
+.fb-list li{margin:4px 0}
+.star-fx{position:fixed;pointer-events:none;font-size:28px;z-index:60;animation:rise 1.4s forwards}
+@keyframes rise{to{transform:translateY(-220px) rotate(300deg);opacity:0}}
+.fixed-btns{position:fixed;top:calc(10px + env(safe-area-inset-top,0px));left:10px;z-index:40;display:flex;gap:6px}
+.fixed-btns button{width:42px;height:42px;border-radius:50%;border:0;font-size:20px;background:rgba(255,255,255,.15);color:#fff;cursor:pointer}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:70;align-items:center;justify-content:center;padding:16px}
+.modal.on{display:flex}.modal .card{background:var(--navy);max-width:480px;width:100%;max-height:85vh;overflow:auto}
+.ach{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.1)}
+</style>
+</head>
+<body>
+<div class="fixed-btns"><button id="muteBtn" title="كتم الصوت" aria-label="كتم الصوت">🔊</button><button id="achBtn" title="الإنجازات" aria-label="الإنجازات">🏆</button><button id="resetBtn" title="إعادة التشغيل" aria-label="إعادة التشغيل">🔄</button></div>
+
+<section id="s-login" class="screen on center">
+  <div class="shield">🛡️</div>
+  <h1 style="font-size:2.2rem">رحلة قادة الأمن السيبراني</h1>
+  <p>هل أنت مستعد لتصبح قائدًا في الأمن السيبراني؟</p>
+  <div class="card"><input id="nameIn" placeholder="اكتب اسمك هنا" maxlength="30"><button class="btn" id="startBtn">ابدأ المغامرة</button><div id="nameErr" style="color:var(--yellow);min-height:1.4em"></div></div>
+</section>
+
+<section id="s-welcome" class="screen center">
+  <div class="shield">🛡️</div>
+  <h1 id="wTitle"></h1>
+  <div class="card"><p>مهمتك هي اجتياز التحديات، واكتشاف التهديدات الإلكترونية، وحماية العالم الرقمي. كل إجابة صحيحة تقربك من لقب قائد الأمن السيبراني!</p><h2 class="pts" id="wName"></h2></div>
+  <button class="btn" id="goMap">هيا نبدأ الرحلة</button>
+</section>
+
+<section id="s-map" class="screen">
+  <div class="top"><span class="pill" id="mName"></span><span class="pill pts" id="mPts"></span></div>
+  <h2 class="center">خريطة الرحلة</h2>
+  <div class="map" id="map"></div>
+</section>
+
+<section id="s-quiz" class="screen">
+  <div class="top"><span class="pill" id="qName"></span><span class="pill" id="qLvl"></span><span class="pill pts" id="qAvail"></span></div>
+  <div class="bar" style="margin:12px 0"><i id="qBar"></i></div>
+  <div class="card" id="qCard">
+    <div id="qNum" style="color:var(--cyan);font-weight:700"></div>
+    <h2 id="qText" style="line-height:1.6"></h2>
+    <div id="qBody"></div>
+    <div class="fb" id="qFb"></div>
+  </div>
+  <div class="center"><button class="btn" id="qNext" disabled>التالي</button></div>
+</section>
+
+<section id="s-result" class="screen center">
+  <div style="font-size:90px" id="rIcon">🎉</div>
+  <h1 id="rTitle"></h1>
+  <div class="card"><div class="stars" style="font-size:2rem" id="rStars"></div><p id="rMsg"></p><p class="pts" id="rPts"></p></div>
+  <button class="btn" id="rBtn"></button>
+</section>
+
+<section id="s-final" class="screen center">
+  <div style="font-size:90px">🏆</div>
+  <h1 id="fTitle"></h1>
+  <div class="card" id="fStats"></div>
+  <button class="btn" id="fAgain">العب مرة أخرى</button> <button class="btn ghost" id="fAch">عرض إنجازاتي</button>
+</section>
+
+<div class="alarm" id="alarm"><div>🚨<br>تحذير! تم اكتشاف تهديد سيبراني، استعد للتحليل واتخاذ القرار</div></div>
+<div class="modal" id="modal"><div class="card"><h2>🏆 لوحة الإنجازات</h2><div id="achBody"></div><div class="center"><button class="btn" id="closeM">إغلاق</button></div></div></div>
+
+<script>
+/* ===================== بيانات اللعبة (سهلة التعديل) ===================== */
+// mcq: سؤال اختيار من متعدد | essay: سؤال مقالي بمعايير تقييم (crit)
+const LEVELS=[
+{n:'صائد التصيد',icon:'📧🔍',color:'#1976D2',items:[
+ {t:'mcq',p:2,q:'ماذا يعني مصطلح «التحديثات الأمنية»؟',o:['تغيير شكل نظام التشغيل','إضافة ميزات جديدة للبرنامج','إصلاح الثغرات الأمنية في البرامج والأجهزة','تسريع التطبيقات'],a:2,why:'التحديثات الأمنية تصلح الثغرات في البرامج والأجهزة حتى لا يستغلها المهاجمون.'},
+ {t:'mcq',p:2,q:'برامج ... تساعد في اكتشاف وإزالة البرامج الضارة من جهازك.',o:['مكافحة الفيروسات','معالجة النصوص','تشغيل الفيديو','تصميم الصور'],a:0,why:'برامج مكافحة الفيروسات تكتشف البرامج الضارة وتزيلها.'},
+ {t:'essay',p:6,q:'اقرأ الرسالة التدريبية الخيالية: «عاجل! تم تعليق حسابك المدرسي. اضغط على الرابط (http://schoolsecurity.example) للتحقق خلال 10 دقائق، أو سيتم إغلاق الحساب. أرسل اسم المستخدم وكلمة المرور إلى مسؤول الدعم».',
+  ask:'١) حدد خمسة مؤشرات على الأقل تكشف الخدعة. ٢) حدد العبارات المشبوهة. ٣) اكتب التصرف الأمني الصحيح مع ذكر السبب.',min:25,
+  crit:[['الاستعجال والضغط الزمني',['عاجل','10 دقايق|10 دقائق|عشر دقائق','استعجال|ضغط|مستعجل']],['التهديد بإغلاق الحساب',['اغلاق|إغلاق|تعليق|ايقاف']],['رابط مشبوه',['رابط|example|موقع غير']],['طلب كلمة المرور والبيانات',['كلمة المرور|كلمه المرور|اسم المستخدم|بيانات']],['مرسل غير موثوق/غير رسمي',['مسوول|مسؤول|مجهول|غير رسمي|المرسل|الدعم']],['التصرف الصحيح (عدم الضغط/التبليغ)',['لا اضغط|لا ارسل|لن اضغط|لن ارسل|تجاهل|ابلغ|احذف|حذف|لا افتح']]],
+  ok:'مؤشرات الخدعة: الاستعجال، التهديد بالإغلاق، رابط مشبوه، طلب كلمة المرور. التصرف الصحيح: عدم الضغط على الرابط وعدم إرسال البيانات، والإبلاغ عن الرسالة.'}]},
+{n:'لغز الخداع',icon:'🎭',color:'#7B4FD6',items:[
+ {t:'mcq',p:2,q:'أي من الأساليب الآتية تعتبر من أساليب الهندسة الاجتماعية؟',o:['استخدام برامج لاختراق كلمات المرور','خداع الأشخاص للكشف عن معلوماتهم','إرسال فيروسات عبر البريد الإلكتروني','استغلال ثغرات في البرنامج'],a:1,why:'الهندسة الاجتماعية تعتمد على خداع الأشخاص أنفسهم لا على الثغرات التقنية.'},
+ {t:'mcq',p:2,q:'الهندسة الاجتماعية تعتمد على استغلال نقاط الضعف في الأنظمة التقنية فقط.',o:['صح','خطأ'],a:1,why:'خطأ، فهي تستغل نقاط الضعف البشرية مثل الثقة والخوف والاستعجال.'},
+ {t:'mcq',p:2,q:'خداع الناس للحصول على معلومات سرية يسمى ...',o:['الهندسة الاجتماعية','التشفير','النسخ الاحتياطي','التحديث'],a:0,why:'هذا هو تعريف الهندسة الاجتماعية.'},
+ {t:'mcq',p:2,q:'يعتبر ... الموجه نوعًا متقدمًا من التصيد الاحتيالي يستهدف أشخاصًا محددين.',o:['التصيد','الفيروس','الجدار الناري','المتصفح'],a:0,why:'التصيد الموجه (Spear Phishing) يستهدف أشخاصًا محددين برسائل مصممة لهم.'},
+ {t:'essay',p:6,q:'وصلتك رسالة من شخص يدعي أنه مسؤول تقنية المعلومات في المدرسة، ويطلب منك إرسال رمز التحقق بحجة إصلاح حسابك، ويستخدم اسمًا رسميًا ويهدد بإيقاف الحساب.',
+  ask:'حدد الأخطار والدليل من الرسالة، واكتب ثلاث خطوات للتحقق قبل الرد، ثم اختر التصرف الأنسب.',min:25,
+  crit:[['انتحال صفة مسؤول',['يدعي|ينتحل|انتحال|يزعم|ادعاء']],['التهديد بإيقاف الحساب والضغط',['يهدد|تهديد|ايقاف|ضغط|استعجال']],['خطورة طلب رمز التحقق',['رمز التحقق|الرمز|كود']],['التحقق عبر قناة رسمية',['اتصل|اتواصل|تواصل|الرسمي|مباشره|مباشرة|شخصيا|شخصيًا']],['عدم مشاركة الرمز',['لا ارسل|لن ارسل|لا اشارك|لن اشارك|لا اعطي|لن اعطي|لا اشارك']],['الإبلاغ',['ابلغ|بلغ|الابلاغ|المعلم|الاداره|الإدارة|اولياء']]],
+  ok:'الأخطار: انتحال صفة، تهديد وضغط، طلب رمز التحقق. التحقق: التواصل مع قسم تقنية المعلومات عبر قناة رسمية، عدم مشاركة الرمز، إبلاغ المعلم أو الإدارة.'}]},
+{n:'حارس الخوادم',icon:'🖥️🛡️',color:'#00A3A3',items:[
+ {t:'mcq',p:2,q:'ما هو الهدف الأساسي من هجمات الحرمان من الخدمة الموزعة (DDoS)؟',o:['سرقة بيانات المستخدمين','تعطيل موقع ويب أو خدمة عبر الإنترنت','نشر معلومات كاذبة','التجسس على اتصالات المستخدمين'],a:1,why:'هدف DDoS هو تعطيل الموقع أو الخدمة بإغراقها بطلبات هائلة.'},
+ {t:'mcq',p:2,q:'ما الروبوتات المستخدمة في هجمات الحرمان من الخدمة الموزعة؟',o:['برامج ذكاء اصطناعي متطورة','شبكة من الأجهزة المخترقة التي يتم التحكم فيها عن بعد','أجهزة كمبيوتر فائقة السرعة','مجموعة من الخوادم الأمنية'],a:1,why:'المهاجم يتحكم عن بعد في شبكة أجهزة مخترقة (روبوتات).'},
+ {t:'mcq',p:2,q:'هجمات الحرمان من الخدمة الموزعة تستهدف جهازًا واحدًا فقط.',o:['صح','خطأ'],a:1,why:'خطأ، فهي تأتي من أجهزة كثيرة موزعة وقد تستهدف مواقع وخدمات عديدة.'},
+ {t:'mcq',p:2,q:'هجمات ... تهدف إلى تعطيل موقع ويب أو خادم عبر الإنترنت عن طريق إرسال كميات هائلة من الطلبات.',o:['الحرمان من الخدمة الموزعة','التصيد','الفدية','التحديث'],a:0,why:'هذا هو وصف هجمات الحرمان من الخدمة الموزعة.'},
+ {t:'mcq',p:2,q:'في هجمات الحرمان من الخدمة الموزعة تُستخدم شبكة من الأجهزة المخترقة تسمى ...',o:['Botnet (شبكة الروبوتات)','Firewall','Cloud','Router'],a:0,why:'تسمى شبكة الأجهزة المخترقة Botnet.'},
+ {t:'essay',p:6,q:'ظهر على شاشة جهاز الفريق رسالة تزعم أن الملفات تم تشفيرها وتطلب فدية مقابل استعادتها.',
+  ask:'تعرف على نوع الهجوم، اذكر أربع علامات أو آثار محتملة، اقترح حلولًا آمنة، وضع خطة استجابة من أربع خطوات.',min:25,
+  crit:[['التعرف على برمجية الفدية',['فديه|فدية|رانسوم|ransom']],['علامات الهجوم (ملفات مشفرة/لا تفتح/رسالة)',['مشفر|لا تفتح|لا استطيع|امتداد|رساله|رسالة|بطء']],['فصل الجهاز عن الشبكة',['افصل|فصل|عزل|اعزل']],['عدم دفع الفدية',['لا ادفع|عدم دفع|لن ادفع|لا ندفع|لن ندفع']],['النسخ الاحتياطي',['نسخه احتياطيه|نسخة احتياطية|نسخ احتياطي|backup']],['الإبلاغ/الفحص بمكافح الفيروسات',['ابلغ|بلغ|مكافح|فحص|مضاد|الدعم']]],
+  ok:'نوع الهجوم: برمجية فدية. الاستجابة: فصل الجهاز، عدم دفع الفدية، الإبلاغ، الفحص والاستعادة من نسخة احتياطية.'}]},
+{n:'قائد الأمن',icon:'🦸🛡️',color:'#E08A1E',items:[
+ {t:'mcq',p:1,q:'يعتبر ... الموجه نوعًا متقدمًا من التصيد الاحتيالي يستهدف أشخاصًا محددين.',o:['التصيد','الفيروس','الدودة','الإعلان'],a:0,why:'التصيد الموجه يستهدف أفرادًا محددين.'},
+ {t:'mcq',p:1,q:'برامج ال... تقوم بتشفير ملفاتك وتطلب فدية لاستعادتها.',o:['الفدية','التحديث','الحماية','النسخ'],a:0,why:'هذه برامج الفدية.'},
+ {t:'mcq',p:1,q:'محاولة سرقة معلوماتك الشخصية عبر رسائل بريد إلكتروني مزيفة تسمى ...',o:['التصيد الاحتيالي','التحديث','الأرشفة','الضغط'],a:0,why:'التصيد الاحتيالي يستخدم رسائل مزيفة لسرقة المعلومات.'},
+ {t:'mcq',p:1,q:'برامج الردية تقوم بإتلاف جهازك بشكل كامل فقط.',o:['صح','خطأ'],a:1,why:'خطأ، برامج الفدية تشفّر الملفات وتطلب مالًا لفك التشفير ولا تتلف الجهاز بالضرورة.'},
+ {t:'mcq',p:1,q:'أي مما يلي يعتبر مثالًا على برامج الفدية؟',o:['برنامج يعرض إعلانات مزعجة','برنامج يشفّر ملفاتك ويطلب فدية لفك تشفيرها','برنامج ينظف الملفات المؤقتة','برنامج يساعدك في تنظيم ملفاتك'],a:1,why:'برامج الفدية تشفّر الملفات وتطلب مالًا لفك التشفير.'},
+ {t:'essay',p:5,q:'أنت قائد الأمن في مدرستك، وتريد مواجهة الهجمات المتقدمة مثل التصيد الموجه وبرامج الفدية وسرقة المعلومات عبر البريد الإلكتروني.',
+  ask:'اشرح فكرة لمواجهة هذه الهجمات موظفًا ما تعلمته في المستويات السابقة.',min:30,
+  crit:[['التوعية والتدريب',['توعيه|توعية|تدريب|وعي']],['التحقق من مصدر الرسائل',['تحقق|مصدر|المرسل|ارسال موثوق']],['التحديثات الأمنية ومكافح الفيروسات',['تحديث|مكافح|مضاد']],['النسخ الاحتياطي',['نسخه احتياطيه|نسخة احتياطية|نسخ احتياطي|backup']],['الإبلاغ وعدم مشاركة المعلومات',['ابلغ|بلغ|لا اشارك|عدم مشاركه|عدم مشاركة|كلمه المرور|كلمة المرور']]],
+  ok:'فكرة مقترحة: توعية الطلاب، التحقق من المصدر، التحديثات ومكافح الفيروسات، النسخ الاحتياطي، والإبلاغ.'}]},
+{n:'مواجهة الهجمات السيبرانية',icon:'🛡️⚡',color:'#E94B4B',items:[
+ {t:'essay',p:5,q:'التحدي النهائي: تتعرض مدرستك لموجة هجمات: DDoS تعطّل موقعها، ورسائل تصيد موجه، وبرمجية فدية على أجهزة الفريق.',
+  ask:'اقترح خطة متكاملة: كيف تكتشف الهجوم؟ ما الإجراءات الأمنية؟ كيف تحمي البيانات والأجهزة؟ كيف تستجيب للحادث وتمنع تكراره؟',min:40,
+  crit:[['اكتشاف الهجوم',['مراقبه|مراقبة|رصد|اكتشاف|سجلات|حركه المرور|حركة المرور|بطء|تنبيه']],['الإجراءات الأمنية',['جدار|حمايه|حماية|مكافح|تحديث|تصفيه|تصفية|فلتر']],['حماية البيانات والأجهزة',['نسخه احتياطيه|نسخة احتياطية|نسخ احتياطي|تشفير|كلمات مرور|كلمه المرور|صلاحيات']],['الاستجابة للحادث',['عزل|افصل|فصل|ابلغ|خطه استجابه|خطة استجابة|استجابة']],['منع التكرار',['توعيه|توعية|مراجعه|مراجعة|تدريب|منع التكرار|تقييم|تحديث']]],
+  ok:'خطة متكاملة: مراقبة ورصد، جدار حماية وتحديثات، نسخ احتياطي وتشفير، عزل وإبلاغ، ثم توعية ومراجعة لمنع التكرار.'}]}
+];
+const TITLES=[[55,'قائد الأمن السيبراني','🥇 الشارة الذهبية'],[50,'نائب قائد الأمن السيبراني','🥇 الشارة الذهبية'],[45,'مفكك رموز الاحتيال','🥈 الشارة الفضية'],[40,'قناص الأمن السيبراني','🥈 الشارة الفضية'],[35,'حارس الأمن السيبراني','🥉 الشارة البرونزية'],[30,'مساعد حارس الأمن السيبراني','🥉 الشارة البرونزية']];
+const PASS=0.6;
+
+/* ===================== الحالة والتخزين ===================== */
+const KEY='cyberLeadersV1';
+let S={name:'',done:{},scores:{},right:{},stars:{}};
+try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+const $=id=>document.getElementById(id);
+const total=()=>Object.values(S.scores).reduce((a,b)=>a+b,0);
+const lvMax=i=>LEVELS[i].items.reduce((a,x)=>a+x.p,0);
+const lvScore=i=>LEVELS[i].items.reduce((a,x,j)=>a+(S.scores[i+'-'+j]||0),0);
+const MAXALL=LEVELS.reduce((a,_,i)=>a+lvMax(i),0);
+
+/* ===================== الصوت (Web Audio) ===================== */
+let AC=null,muted=false,alarmTimer=null;
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==='suspended')AC.resume();return AC}
+function tone(f,t0,d,type='sine',v=.2){const c=ac();if(!c||muted)return;const o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(v,c.currentTime+t0);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+t0+d);o.connect(g).connect(c.destination);o.start(c.currentTime+t0);o.stop(c.currentTime+t0+d+.02)}
+const SFX={
+ ok(){[660,880,1320].forEach((f,i)=>tone(f,i*.09,.18,'triangle'))},
+ bad(){tone(220,0,.18,'sawtooth',.18);tone(150,.16,.28,'sawtooth',.18)},
+ win(){[523,659,784,1047,784,1047,1319].forEach((f,i)=>tone(f,i*.12,.25,'triangle',.22))},
+ unlock(){[400,600,900,1200].forEach((f,i)=>tone(f,i*.07,.15,'square',.1))},
+ click(){tone(700,0,.05,'sine',.1)}
+};
+function startAlarm(){stopAlarm();if(muted)return;let n=0;const beep=()=>{if(n++>=8){stopAlarm();return}tone(n%2?900:600,0,.22,'square',.12);tone(n%2?950:650,0,.22,'sawtooth',.06)};beep();alarmTimer=setInterval(beep,300);$('alarm').classList.add('on');setTimeout(()=>$('alarm').classList.remove('on'),3500)}
+function stopAlarm(){clearInterval(alarmTimer);alarmTimer=null;$('alarm').classList.remove('on')}
+function stars(el){for(let i=0;i<18;i++){const s=document.createElement('div');s.className='star-fx';s.textContent=['⭐','✨','🌟'][i%3];s.style.left=Math.random()*95+'vw';s.style.top=(50+Math.random()*40)+'vh';document.body.appendChild(s);setTimeout(()=>s.remove(),1500)}}
+
+/* ===================== التنقل ===================== */
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));$(id).classList.add('on');window.scrollTo(0,0);stopAlarm()}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+$('startBtn').onclick=()=>{ac();const v=$('nameIn').value.trim();if(!v){$('nameErr').textContent='من فضلك اكتب اسمك أولًا';$('nameIn').focus();return}S.name=v;save();SFX.click();toWelcome()};
+$('nameIn').addEventListener('keydown',e=>{if(e.key==='Enter')$('startBtn').click()});
+function toWelcome(){$('wTitle').textContent='مرحبًا بك يا '+S.name+' في رحلة قادة الأمن السيبراني!';$('wName').textContent='👤 '+S.name;show('s-welcome')}
+$('goMap').onclick=()=>{ac();SFX.click();toMap()};
+
+/* ===================== الخريطة ===================== */
+const unlocked=i=>i===0||!!S.done[i-1];
+function toMap(){
+  $('mName').textContent='👤 '+S.name;$('mPts').textContent='⭐ '+total()+' / '+MAXALL;
+  const m=$('map');m.innerHTML='';
+  LEVELS.forEach((L,i)=>{
+    const open=unlocked(i),done=!!S.done[i];
+    const nd=document.createElement('div');nd.className='node';
+    const c=document.createElement('div');c.className='circle '+(done?'done':open?'open':'locked');c.style.background='linear-gradient(135deg,'+L.color+',#0B1F3A)';
+    c.innerHTML=(open?L.icon:'🔒')+'<span class="badge-n">'+(i+1)+'</span>'+(done?'<span style="position:absolute;bottom:-6px;left:-6px;font-size:26px">✅</span>':'');
+    c.onclick=()=>{ac();if(!open){SFX.bad();c.classList.add('flash-r');setTimeout(()=>c.classList.remove('flash-r'),600);return}SFX.click();startLevel(i)};
+    const nm=document.createElement('div');nm.className='nname';nm.textContent=L.n;
+    const st=document.createElement('div');st.className='stars';st.textContent=done?'★'.repeat(S.stars[i]||1)+'☆'.repeat(3-(S.stars[i]||1)):'';
+    nd.append(c,nm,st);m.appendChild(nd);
+  });
+  show('s-map');
+}
+
+/* ===================== المستوى والأسئلة ===================== */
+let cur={lv:0,idx:0,answered:false};
+function startLevel(i){
+  // إعادة محاولة المستوى: تصفير نقاطه فقط (لا تتكرر النقاط)
+  LEVELS[i].items.forEach((_,j)=>{delete S.scores[i+'-'+j];delete S.right[i+'-'+j]});
+  cur={lv:i,idx:0,answered:false};save();renderItem();show('s-quiz');
+}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function renderItem(){
+  const L=LEVELS[cur.lv],it=L.items[cur.idx];cur.answered=false;
+  $('qName').textContent='👤 '+S.name;$('qLvl').textContent='المستوى '+(cur.lv+1)+': '+L.n;$('qAvail').textContent='🎯 '+it.p+' نقاط متاحة';
+  $('qBar').style.width=(cur.idx/L.items.length*100)+'%';
+  $('qNum').textContent='السؤال '+(cur.idx+1)+' من '+L.items.length+(it.t==='essay'?' — سؤال مقالي':'');
+  const fb=$('qFb');fb.className='fb';fb.innerHTML='';$('qNext').disabled=true;$('qNext').textContent=cur.idx===L.items.length-1?'إنهاء المستوى':'التالي';
+  const body=$('qBody');body.innerHTML='';
+  if(it.t==='mcq'){
+    $('qText').textContent=it.q;
+    const opts=shuffle(it.o.map((x,k)=>({x,right:k===it.a})));
+    // الصح/خطأ تبقى بترتيبها الطبيعي
+    const list=it.o.length===2?it.o.map((x,k)=>({x,right:k===it.a})):opts;
+    list.forEach(o=>{const b=document.createElement('button');b.className='opt';b.textContent=o.x;b.onclick=()=>answerMcq(it,o,b,list);body.appendChild(b)});
+  }else{
+    $('qText').textContent=it.q;
+    startAlarm(); // إنذار الاختراق عند فتح السؤال المقالي
+    body.innerHTML='<p style="color:var(--yellow);font-weight:700">'+esc(it.ask)+'</p><textarea id="essay" placeholder="اكتب تحليلك هنا (لا تقل عن '+it.min+' كلمة)..."></textarea><div class="center"><button class="btn" id="sendEssay">إرسال الإجابة</button></div>';
+    $('essay').addEventListener('input',stopAlarm,{once:true});
+    $('sendEssay').onclick=()=>gradeEssay(it);
+  }
+}
+function answerMcq(it,o,btn,list){
+  if(cur.answered)return;ac();cur.answered=true;const key=cur.lv+'-'+cur.idx;
+  document.querySelectorAll('#qBody .opt').forEach((b,k)=>{b.disabled=true;if(list[k].right)b.classList.add('ok')});
+  const fb=$('qFb'),card=$('qCard');
+  if(o.right){S.scores[key]=it.p;S.right[key]=1;btn.classList.add('ok');SFX.ok();card.classList.add('flash-g');stars();fb.className='fb ok';fb.innerHTML='✅ أحسنت يا '+esc(S.name)+'! +'+it.p+' نقاط<br>'+esc(it.why)}
+  else{S.scores[key]=0;btn.classList.add('bad');SFX.bad();card.classList.add('flash-r');fb.className='fb bad';fb.innerHTML='❌ لا بأس، حاول مرة أخرى في المرة القادمة!<br>الإجابة الصحيحة: <b>'+esc(it.o[it.a])+'</b><br>'+esc(it.why)}
+  setTimeout(()=>card.classList.remove('flash-g','flash-r'),700);
+  save();$('qNext').disabled=false;
+}
+
+/* ===================== تقييم المقال (محلي بالمعايير) ===================== */
+function norm(s){return s.replace(/[\u064B-\u0652\u0640]/g,'').replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').toLowerCase()}
+function gradeEssay(it){
+  if(cur.answered)return;
+  const txt=$('essay').value.trim(),words=txt.split(/\s+/).filter(Boolean).length;
+  const fb=$('qFb');
+  if(words<it.min){fb.className='fb bad';fb.innerHTML='✍️ إجابتك قصيرة ('+words+' كلمة). اكتب على الأقل '+it.min+' كلمة لتغطي عناصر المطلوب.';return}
+  stopAlarm();cur.answered=true;const key=cur.lv+'-'+cur.idx,n=norm(txt);
+  const met=[],miss=[];
+  it.crit.forEach(([label,pats])=>{
+    // يُحتسب المعيار إذا ذُكر أي من مفاهيمه (مع مرادفاته) داخل الإجابة
+    const hit=pats.some(p=>new RegExp(norm(p)).test(n));(hit?met:miss).push(label)});
+  const pts=Math.round(it.p*met.length/it.crit.length);
+  S.scores[key]=pts;if(met.length>=Math.ceil(it.crit.length/2))S.right[key]=1;save();
+  const good=met.length>=Math.ceil(it.crit.length/2);
+  (good?SFX.ok:SFX.bad)();if(good)stars();
+  $('sendEssay').disabled=true;$('essay').disabled=true;
+  fb.className='fb '+(good?'ok':'bad');
+  fb.innerHTML='<b>تقييم محلي بحسب معايير الإجابة (دون اتصال بخدمة خارجية): '+pts+' / '+it.p+'</b><ul class="fb-list">'+met.map(x=>'<li>✅ '+esc(x)+'</li>').join('')+miss.map(x=>'<li>⚠️ ناقص: '+esc(x)+'</li>').join('')+'</ul><b>نموذج الإجابة:</b> '+esc(it.ok);
+  $('qNext').disabled=false;
+}
+$('qNext').onclick=()=>{ac();SFX.click();const L=LEVELS[cur.lv];if(cur.idx<L.items.length-1){cur.idx++;renderItem()}else finishLevel()};
+
+/* ===================== نهاية المستوى ===================== */
+function finishLevel(){
+  const i=cur.lv,sc=lvScore(i),mx=lvMax(i),ratio=sc/mx,pass=ratio>=PASS;
+  $('qBar').style.width='100%';
+  if(pass){
+    const wasDone=!!S.done[i];S.done[i]=true;S.stars[i]=ratio>=.9?3:ratio>=.75?2:1;save();
+    SFX.win();stars();if(i<LEVELS.length-1)setTimeout(SFX.unlock,1300);
+    $('rIcon').textContent='🎉';$('rTitle').textContent='أحسنت يا '+S.name+'! اجتزت المستوى '+(i+1);
+    $('rStars').textContent='★'.repeat(S.stars[i])+'☆'.repeat(3-S.stars[i]);
+    $('rMsg').textContent='مكافأة: '+(S.stars[i]===3?'أداء مبهر! 🏅':S.stars[i]===2?'أداء رائع! 👏':'تقدم جيد، يمكنك إعادة المستوى لنجوم أكثر.')+(i<LEVELS.length-1?' 🔓 تم فتح المستوى التالي: '+LEVELS[i+1].n:'');
+    $('rPts').textContent='نقاط هذا المستوى: '+sc+' / '+mx;
+    $('rBtn').textContent=i===LEVELS.length-1?'عرض النتيجة النهائية':'العودة إلى الخريطة';
+    $('rBtn').onclick=()=>i===LEVELS.length-1?toFinal():toMap();
+  }else{
+    SFX.bad();$('rIcon').textContent='💥';$('rTitle').textContent='لم تجتز المستوى بعد، حاول مرة أخرى!';
+    $('rStars').textContent='☆☆☆';$('rMsg').textContent='تحتاج إلى '+Math.ceil(mx*PASS)+' نقاط على الأقل لاجتياز المستوى.';
+    $('rPts').textContent='نقاطك: '+sc+' / '+mx;$('rBtn').textContent='إعادة المستوى';$('rBtn').onclick=()=>startLevel(i);
+  }
+  show('s-result');
+}
+
+/* ===================== الشاشة النهائية والإنجازات ===================== */
+function titleFor(p){return TITLES.find(t=>p>=t[0])||null}
+function toFinal(){
+  const p=total(),t=titleFor(p),right=Object.keys(S.right).length,st=Object.values(S.stars).reduce((a,b)=>a+b,0);
+  SFX.win();stars();setTimeout(stars,700);
+  $('fTitle').innerHTML='مبروك يا '+esc(S.name)+'!<br>لقد أكملت رحلة قادة الأمن السيبراني بنجاح!';
+  $('fStats').innerHTML='<p>مجموع النقاط: <b class="pts">'+p+' / '+MAXALL+'</b></p><p>المستويات المكتملة: <b>'+Object.keys(S.done).length+' / '+LEVELS.length+'</b></p><p>الإجابات الصحيحة: <b>'+right+'</b></p><p>النجوم: <b class="pts">'+st+' ⭐</b></p>'+
+   (t?'<h2>'+t[2]+'</h2><h2>لقبك: '+t[1]+'</h2>':'<h2>💥 لقد انهار الفريق، حاول مرة أخرى</h2><p>أعد المستويات لرفع نقاطك.</p>');
+  show('s-final');
+}
+function achievements(){
+  const p=total(),t=titleFor(p);
+  $('achBody').innerHTML='<div class="ach"><span>النقاط</span><b class="pts">'+p+' / '+MAXALL+'</b></div><div class="ach"><span>اللقب الحالي</span><b>'+(t?t[1]+' '+t[2]:'—')+'</b></div>'+
+  LEVELS.map((L,i)=>'<div class="ach"><span>'+(i+1)+'. '+L.n+'</span><span>'+(S.done[i]?'<span class="stars">'+'★'.repeat(S.stars[i]||1)+'</span> '+lvScore(i)+'/'+lvMax(i):'🔒 لم يكتمل')+'</span></div>').join('')+
+  '<h3>سلم الشارات</h3>'+TITLES.map(x=>'<div class="ach" style="opacity:'+(p>=x[0]?1:.5)+'"><span>'+x[2]+' — '+x[1]+'</span><span>'+x[0]+'+</span></div>').join('');
+  $('modal').classList.add('on');
+}
+$('achBtn').onclick=()=>{ac();achievements()};$('fAch').onclick=achievements;$('closeM').onclick=()=>$('modal').classList.remove('on');
+function resetAll(){if(confirm('هل أنت متأكد؟ سيتم حذف اسمك وكل تقدمك نهائيًا.')){S={name:'',done:{},scores:{},right:{},stars:{}};try{localStorage.removeItem(KEY)}catch(e){}$('nameIn').value='';show('s-login')}}
+$('resetBtn').onclick=resetAll;$('fAgain').onclick=resetAll;
+$('muteBtn').onclick=()=>{ac();muted=!muted;$('muteBtn').textContent=muted?'🔇':'🔊';if(muted)stopAlarm()};
+document.addEventListener('click',()=>ac(),{once:true});
+
+/* ===================== التشغيل ===================== */
+if(S.name){$('nameIn').value=S.name;toMap()}
+</script>
+</body>
+</html>
